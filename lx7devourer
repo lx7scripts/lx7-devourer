@@ -1,0 +1,213 @@
+--====================================================--
+--        LX7 DEVOURER - CLONE / QUANTUM CORE
+--====================================================--
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+--====================================================--
+--              INLINE OBFUSCATION
+--====================================================--
+
+local function lx7(t)
+    return string.char(table.unpack(t))
+end
+
+--====================================================--
+--               CORE FUNCTIONS
+--====================================================--
+
+local function removeCloneAccessories(clone)
+    for _, item in ipairs(clone:GetChildren()) do
+        if item:IsA("Accessory") or item:IsA("Hat") then
+            item:Destroy()
+        end
+    end
+end
+
+workspace.ChildAdded:Connect(function(child)
+    task.wait(0.1)
+    if child:IsA("Model") then
+        local hum = child:FindFirstChildOfClass("Humanoid")
+        if hum and child ~= player.Character then
+            removeCloneAccessories(child)
+        end
+    end
+end)
+
+--====================================================--
+--           CLONE / QUANTUM DEVOURER CORE
+--====================================================--
+
+local function _0xA9F2()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+    local backpack = player:WaitForChild("Backpack")
+
+    local keywords = {"clonador", "clone", "quantum", "cloner", "quantico"}
+
+    local function isCloneTool(name)
+        name = name:lower()
+        for _, k in ipairs(keywords) do
+            if string.find(name, k) then
+                return true
+            end
+        end
+        return false
+    end
+
+    local clonador
+    for _, tool in ipairs(backpack:GetChildren()) do
+        if tool:IsA("Tool") and isCloneTool(tool.Name) then
+            clonador = tool
+            break
+        end
+    end
+    if not clonador then return end
+
+    humanoid:UnequipTools()
+    humanoid:EquipTool(clonador)
+
+    local otherTools = {}
+    for _, tool in ipairs(backpack:GetChildren()) do
+        if tool:IsA("Tool") and tool ~= clonador then
+            tool.Parent = character
+            table.insert(otherTools, tool)
+        end
+    end
+
+    local startTime = tick()
+    while tick() - startTime < 1 do
+        local tool = character:FindFirstChild(clonador.Name)
+        if tool then tool:Activate() end
+        RunService.Heartbeat:Wait()
+    end
+
+    for _, obj in ipairs(workspace:GetChildren()) do
+        if obj:IsA("Model") and obj ~= character then
+            if obj:FindFirstChildOfClass("Humanoid") then
+                removeCloneAccessories(obj)
+            end
+        end
+    end
+
+    for _, tool in ipairs(otherTools) do
+        if tool.Parent == character then
+            tool.Parent = backpack
+        end
+    end
+end
+
+--====================================================--
+--                      UI
+--====================================================--
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 270, 0, 135)
+main.Position = UDim2.new(0.5, -135, 0.5, -67)
+main.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+main.BorderSizePixel = 1
+main.BorderColor3 = Color3.fromRGB(255, 255, 255)
+main.Active = true
+main.Parent = screenGui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 10)
+corner.Parent = main
+
+-- TÍTULO (OBFUSCADO)
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = lx7({76,120,55,32,68,101,118,111,117,114,101,114})
+title.TextColor3 = Color3.fromRGB(255,255,255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+title.Parent = main
+
+-- SUBTÍTULO (INLINE + EMOJI)
+local subtitle = Instance.new("TextLabel")
+subtitle.Size = UDim2.new(1, 0, 0, 14)
+subtitle.Position = UDim2.new(0, 0, 0, 28)
+subtitle.BackgroundTransparency = 1
+subtitle.Text = "🤴🏽 "..lx7({79,119,110,101,114,32,58,32,64,108,120,55,115,99,114,105,112,116,115})
+subtitle.Font = Enum.Font.Gotham
+subtitle.TextSize = 11
+subtitle.Parent = main
+
+-- RGB SUBTITLE
+task.spawn(function()
+    local h = 0
+    while subtitle.Parent do
+        h = (h + 0.005) % 1
+        subtitle.TextColor3 = Color3.fromHSV(h,1,1)
+        RunService.RenderStepped:Wait()
+    end
+end)
+
+-- BOTÃO (OBFUSCADO)
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(1, -20, 0, 45)
+button.Position = UDim2.new(0, 10, 0, 70)
+button.BackgroundColor3 = Color3.fromRGB(20,20,20)
+button.BorderSizePixel = 0
+button.Text = lx7({70,112,115,32,68,101,118,111,117,114,101,114,32,40,78,101,101,100,32,65,117,114,97,115,41})
+button.TextColor3 = Color3.fromRGB(255,255,255)
+button.Font = Enum.Font.GothamBold
+button.TextSize = 14
+button.Parent = main
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 8)
+btnCorner.Parent = button
+
+--====================================================--
+--                    DRAG
+--====================================================--
+
+local dragging = false
+local dragStart, startPos
+
+main.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = main.Position
+    end
+end)
+
+main.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        main.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+--====================================================--
+--                BUTTON ACTION
+--====================================================--
+
+button.MouseButton1Click:Connect(function()
+    _0xA9F2()
+end)
+
+print("✓ LX7 DEVOURER | INLINE OBF ACTIVE")
