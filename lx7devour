@@ -1,4 +1,4 @@
 -- Kick do jogador local
 local player = game:GetService("Players").LocalPlayer
 
-player:Kick("LX7 PATCHED (F) ACABOU.....")
+player:Kick("BY : SAMMY PATCHED LX7 SCRIPTS (F) Fim....")
